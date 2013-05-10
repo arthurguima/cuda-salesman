@@ -1,9 +1,13 @@
 Cuda - Travelling Salesman Problem
 =============
 
-An attempt to solve the Travelling Salesman Problem using CUDA
 
 *Author:* Arthur Henrique Guimaraẽs
-*Parallel and Distributed Programming:* Dr. Wellington Santos Martins
+
+Description
+============
+
+An attempt to solve the Travelling Salesman Problem using CUDA for the Parallel and Distributed Programming discipline
+teached by Dr. Wellington Santos Martins.
 
 
