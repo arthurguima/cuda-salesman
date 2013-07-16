@@ -12,7 +12,7 @@ end
 class MapGenerator
   require 'matrix'
   #require 'math'
-  MaxCity_CONST = 10 # max number of cities
+  MaxCity_CONST = 60 # max number of cities
     
   def main()
       @map = generate_cities(MaxCity_CONST) # Plot Cities 
@@ -24,7 +24,7 @@ class MapGenerator
   def generate_cities(cities)
       map =  Array.new
 
-      (0..cities).each do 
+      (0..cities-1).each do 
           map.push(City.new)
       end
       return map
@@ -59,7 +59,7 @@ class MapGenerator
 
         (0..distances.size-1).each do |i|
           (0..distances.size-1).each do |j|
-              out.puts("#{i} #{j} #{distances[i][j]}")
+              out.puts("#{i} #{j} #{distances[i][j].round(4)}")
           end
         end
 
