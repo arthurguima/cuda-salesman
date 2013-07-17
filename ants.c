@@ -1,7 +1,12 @@
-//Ant algorithms for Travelling salesman Problem
+//Sequencial ant algorithm for the travelling salesman problem
+//Made by: Arthur Henrique
+//Based on: https://github.com/ameya005/AntColonyAlgorithms
 #include <stdio.h>
+#include<stdlib.h>
+#include <assert.h>
+#include <math.h>
 
-//Ant algorithm problem parameters
+//Problem parameters
 #define CITIES 60
 #define ANTS 30
 #define MAX_DIST 100
@@ -15,7 +20,7 @@
 #define MAX_TIME (MAX_TOURS * CITIES)
 #define INIT_PHER (1.0/CITIES)
 
-//Initial Definiton of the problem
+//Global structures
 struct ant{
 	
 	int curCity, nextCity, pathIndex;
@@ -29,6 +34,7 @@ struct ant ants[ANTS];
 double hormone[CITIES][CITIES];
 
 double bestdistance = (double)MAX_TOTAL_DISTANCE;
+int bestIndex;
 
 //Methods
 
@@ -38,7 +44,9 @@ void get_distances_matrix(){
 
   while(scanf("%i %i %lf",&i,&j,&k) == 3){
     distances[i][j] = k;
-    // printf("%lf \n",k);
+    hormone[i][j] = INIT_PHER;
+     //printf("i: %i, j: %i, k: %lf \n",i,j,k);
+     //printf("Distance[i][j]: %lf\n", distances[i][j]);
   }
   printf("Got distance Matrix -- %i cities\n", CITIES);
 }
@@ -47,7 +55,7 @@ void initialize_ants(){
    int i,k, init = 0;
    for( i = 0; i < ANTS; i++){
      if(init == CITIES)
-      init == 0;
+       init == 0;
   
      for(k = 0; k < CITIES; k++){
        ants[i].visited[k] = 0;
@@ -59,15 +67,178 @@ void initialize_ants(){
      ants[i].path[0] = ants[i].curCity;
      ants[i].nextCity = -1;
      ants[i].tourLength = 0;
+     ants[i].visited[ants[i].curCity] = 1;
    }
    printf("Ants Initialized - %i ants\n",ANTS);
 }
 
+//reinitialize all ants and redistribute them
+void restart_ants(){
+	int ant,i,to=0;
+
+	for(ant = 0; ant < ANTS; ant++){
+		if(ants[ant].tourLength < bestdistance){
+			bestdistance = ants[ant].tourLength;
+			bestIndex = ant;
+		}
+
+		ants[ant].nextCity = -1;
+		ants[ant].tourLength = 0.0;
+
+		for(i = 0; i < CITIES; i++){
+			ants[ant].visited[i] = 0;
+			ants[ant].path[i] = -1;
+		}
+
+		if(to == CITIES)
+			to=0;
+
+		ants[ant].curCity = to++;
+
+		ants[ant].pathIndex = 1;
+		ants[ant].path[0] = ants[ant].curCity;
+
+		ants[ant].visited[ants[ant].curCity] = 1;
+	}
+}
+
+double antProduct(int from, int to){
+  //printf("Ant Product: from: %i to: %i\n", from, to);
+  //printf("First: %lf, Second: %lf\n",pow( hormone[from][to], ALPHA), pow( (1.0/ distances[from][to]), BETA));
+  //printf("Hormone: %lf, Distance: %lf, BETA: %lf\n", hormone[from][to], distances[from][to], BETA);
+   return(( pow( hormone[from][to], ALPHA) * pow( (1.0/ distances[from][to]), BETA)));
+}
+
+int NextCity( int pos ){
+	int from, to;
+	double denom = 0.0;
+
+	from = ants[pos].curCity;
+
+  for(to = 0; to < CITIES; to++){
+		if(ants[pos].visited[to] == 0){
+			denom += antProduct( from, to );
+      //printf("%lf -- denom\n", denom);
+		}
+	}
+   
+  assert(denom != 0.0); 
+
+	do{
+		double p = 0.0;
+		to++;
+
+		if(to >= CITIES)
+			to=0;
+
+		if(ants[pos].visited[to] == 0){
+			p = antProduct(from,to)/denom;
+
+			double x = ((double)rand()/RAND_MAX); 
+      //printf("Denon: %lf -- X: %lf, p: %lf\n",denom, (double)rand()/RAND_MAX,p);
+			if(x < p){
+        //printf("%lf -- X\n", x);
+				break;
+			}
+		}//sleep(3);
+	}while(1);
+
+	return to;
+}
+
+int simulate_ants(){
+  int k, moving = 0; 
+  
+  for(k = 0; k < ANTS; k++){ 
+    //printf("Formiga (%i)\n", k);
+	if( ants[k].pathIndex < CITIES ){ //check if all cities were visited
+		ants[k].nextCity = NextCity(k);
+		ants[k].visited[ants[k].nextCity] = 1;
+		ants[k].path[ants[k].pathIndex++] = ants[k].nextCity;
+
+		ants[k].tourLength += distances[ants[k].curCity][ants[k].nextCity];
+
+		//handle last case->last city to first
+
+		if(ants[k].pathIndex == CITIES){
+			ants[k].tourLength += distances[ants[k].path[CITIES -1]][ants[k].path[0]];
+		}
+
+		ants[k].curCity = ants[k].nextCity;
+		moving++;
+
+	}
+  } 
+  return moving;
+}
+
+void updateTrails(){
+	int from,to,i,ant;
+
+	//hormone evaporation
+	for(from = 0; from < CITIES; from++)
+		for(to = 0;to < CITIES; to++){
+			if(from!=to){
+				hormone[from][to] *=( 1.0 - RHO);
+
+				if(hormone[from][to] < 0.0){
+					hormone[from][to] = INIT_PHER;
+				}
+			}
+		}
+	
+
+	//add new pheromone to the trails
+	for(ant = 0; ant < ANTS; ant++)
+		for(i = 0; i < CITIES; i++){	
+			if( i < CITIES - 1 ){
+				from = ants[ant].path[i];
+				to = ants[ant].path[i+1];
+			}
+			else{
+				from = ants[ant].path[i];
+				to = ants[ant].path[0];
+			}
+
+			hormone[from][to] += (QVAL/ ants[ant].tourLength);
+			hormone[to][from] = hormone[from][to];
+
+		}
+	
+
+	for (from = 0; from < CITIES; from++)
+		for( to = 0; to < CITIES; to++){
+			hormone[from][to] *= RHO;
+		}
+	
+
+}
+
+void move_ants(){
+  int curtime = 0;
+
+  while(curtime++ < MAX_TIME){ // Qual será a condição de parada?
+    if( simulate_ants() == 0){
+      updateTrails();
+      if (curtime != MAX_TIME)
+          restart_ants();
+    }
+    printf("Best: %lf\n", bestdistance);
+  }
+}
+
+
 int main()
 {
+//  printf("%i -", MAX_TOTAL_DISTANCE);
   get_distances_matrix();
 
   initialize_ants();
+  
+  srand(time(NULL));
+  printf("End - setting data; Begin -- calculations\n");
 
+  move_ants();
+ 
 	return 0;
 }
