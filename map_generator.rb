@@ -13,7 +13,11 @@ class MapGenerator
   require 'matrix'
   #require 'math'
 <<<<<<< HEAD
+<<<<<<< HEAD
   MaxCity_CONST = 130 # max number of cities
+=======
+  MaxCity_CONST = 60 # max number of cities
+>>>>>>> parent of f2ce964... woking with 125
 =======
   MaxCity_CONST = 60 # max number of cities
 >>>>>>> parent of f2ce964... woking with 125

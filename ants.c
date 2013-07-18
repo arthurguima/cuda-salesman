@@ -8,7 +8,11 @@
 
 //Problem parameters
 <<<<<<< HEAD
+<<<<<<< HEAD
 #define CITIES 130
+=======
+#define CITIES 60
+>>>>>>> parent of f2ce964... woking with 125
 =======
 #define CITIES 60
 >>>>>>> parent of f2ce964... woking with 125
