@@ -7,13 +7,17 @@
 #include <math.h>
 
 //Problem parameters
+<<<<<<< HEAD
 #define CITIES 130
+=======
+#define CITIES 60
+>>>>>>> parent of f2ce964... woking with 125
 #define ANTS 30
 #define MAX_DIST 100
 #define MAX_TOTAL_DISTANCE (CITIES * MAX_DIST)
 
-#define ALPHA 1
-#define BETA 5 //This parameter raises the weight of distance over pheromone
+#define ALPHA 1.0
+#define BETA 5.0 //This parameter raises the weight of distance over pheromone
 #define RHO 0.5 //Evapouration rate
 #define QVAL 100
 #define MAX_TOURS 20
@@ -26,14 +30,14 @@ struct ant{
 	int curCity, nextCity, pathIndex;
 	int visited[CITIES];
 	int path[CITIES];
-	float tourLength;
+	double tourLength;
 };
 
-float distances[CITIES][CITIES];
+double distances[CITIES][CITIES];
 struct ant ants[ANTS];
 double hormone[CITIES][CITIES];
 
-float bestdistance = (float)MAX_TOTAL_DISTANCE;
+double bestdistance = (double)MAX_TOTAL_DISTANCE;
 int bestIndex;
 
 //Methods
@@ -106,7 +110,7 @@ double antProduct(int from, int to){
   //printf("Ant Product: from: %i to: %i\n", from, to);
   //printf("First: %lf, Second: %lf\n",pow( hormone[from][to], ALPHA), pow( (1.0/ distances[from][to]), BETA));
   //printf("Hormone: %lf, Distance: %lf, BETA: %lf\n", hormone[from][to], distances[from][to], BETA);
-   return (double) (( pow( hormone[from][to], ALPHA) * pow( (1.0/ distances[from][to]), BETA)));
+   return(( pow( hormone[from][to], ALPHA) * pow( (1.0/ distances[from][to]), BETA)));
 }
 
 int NextCity( int pos ){
@@ -134,8 +138,8 @@ int NextCity( int pos ){
 		if(ants[pos].visited[to] == 0){
 			p = antProduct(from,to)/denom;
 
-			double x = (double)(rand() % 100000)/ 100000; 
-     // printf("Denon: %18.50f -- X: %lf, p: %18.50f\n",denom, (double)rand()/RAND_MAX,p);
+			double x = ((double)rand()/RAND_MAX); 
+      printf("Denon: %lf -- X: %lf, p: %lf\n",denom, (double)rand()/RAND_MAX,p);
 			if(x < p){
         //printf("%lf -- X\n", x);
 				break;
