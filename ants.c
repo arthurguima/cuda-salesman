@@ -7,7 +7,7 @@
 #include <math.h>
 
 //Problem parameters
-#define CITIES 125
+#define CITIES 130
 #define ANTS 30
 #define MAX_DIST 100
 #define MAX_TOTAL_DISTANCE (CITIES * MAX_DIST)

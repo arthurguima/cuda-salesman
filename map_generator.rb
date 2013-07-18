@@ -12,7 +12,7 @@ end
 class MapGenerator
   require 'matrix'
   #require 'math'
-  MaxCity_CONST = 125 # max number of cities
+  MaxCity_CONST = 130 # max number of cities
     
   def main()
       @map = generate_cities(MaxCity_CONST) # Plot Cities 
