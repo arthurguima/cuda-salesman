@@ -135,7 +135,7 @@ int NextCity( int pos ){
 			p = antProduct(from,to)/denom;
 
 			double x = ((double)rand()/RAND_MAX); 
-      //printf("Denon: %lf -- X: %lf, p: %lf\n",denom, (double)rand()/RAND_MAX,p);
+      printf("Denon: %lf -- X: %lf, p: %lf\n",denom, (double)rand()/RAND_MAX,p);
 			if(x < p){
         //printf("%lf -- X\n", x);
 				break;
