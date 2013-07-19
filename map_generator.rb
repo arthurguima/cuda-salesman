@@ -12,7 +12,7 @@ end
 class MapGenerator
   require 'matrix'
   #require 'math'
-  MaxCity_CONST = 130 # max number of cities
+  MaxCity_CONST = 190 # max number of cities
     
   def main()
       @map = generate_cities(MaxCity_CONST) # Plot Cities 
@@ -53,17 +53,16 @@ class MapGenerator
   #distances -> Matrix of distances
   def generate_output(distances)
       if File.exist?("map.txt")
-       puts "The file already exists."
-      else
+       puts "The file already exists. Rebuilding it..."
+       system("rm map.txt")
+      end
         out = File.open("map.txt","w")
 
-        (0..distances.size-1).each do |i|
-          (0..distances.size-1).each do |j|
-              out.puts("#{i} #{j} #{distances[i][j].round(4)}")
-          end
+      (0..distances.size-1).each do |i|
+        (0..distances.size-1).each do |j|
+            out.puts("#{i} #{j} #{distances[i][j].round(4)}")
         end
-
-     end
+      end
   end
   
   def initialize
