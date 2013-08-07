@@ -2,13 +2,13 @@
 //Made by: Arthur Henrique
 //Based on: https://github.com/ameya005/AntColonyAlgorithms
 #include <stdio.h>
-#include<stdlib.h>
+#include <stdlib.h>
 #include <assert.h>
 #include <math.h>
 
 //Problem parameters
-#define CITIES 190
-#define ANTS 30
+#define CITIES 1000
+#define ANTS 180
 #define MAX_DIST 100
 #define MAX_TOTAL_DISTANCE (CITIES * MAX_DIST)
 
@@ -48,14 +48,14 @@ void get_distances_matrix(){
      //printf("i: %i, j: %i, k: %lf \n",i,j,k);
      //printf("Distance[i][j]: %lf\n", distances[i][j]);
   }
-  printf("Got distance Matrix -- %i cities\n", CITIES);
+//  printf("Got distance Matrix -- %i cities\n", CITIES);
 }
 
 void initialize_ants(){
    int i,k, init = 0;
    for( i = 0; i < ANTS; i++){
      if(init == CITIES)
-       init == 0;
+       init = 0;
   
      for(k = 0; k < CITIES; k++){
        ants[i].visited[k] = 0;
@@ -69,7 +69,7 @@ void initialize_ants(){
      ants[i].tourLength = 0;
      ants[i].visited[ants[i].curCity] = 1;
    }
-   printf("Ants Initialized - %i ants\n",ANTS);
+  // printf("Ants Initialized - %i ants\n",ANTS);
 }
 
 //reinitialize all ants and redistribute them
@@ -77,6 +77,7 @@ void restart_ants(){
 	int ant,i,to=0;
 
 	for(ant = 0; ant < ANTS; ant++){
+//	  printf("ant %i -- tour: %f  -- best: %f\n",ant, ants[ant].tourLength, bestdistance);
 		if(ants[ant].tourLength < bestdistance){
 			bestdistance = ants[ant].tourLength;
 			bestIndex = ant;
@@ -89,11 +90,8 @@ void restart_ants(){
 			ants[ant].visited[i] = 0;
 			ants[ant].path[i] = -1;
 		}
-
-		if(to == CITIES)
-			to=0;
-
-		ants[ant].curCity = to++;
+		
+		ants[ant].curCity = rand()%CITIES;
 
 		ants[ant].pathIndex = 1;
 		ants[ant].path[0] = ants[ant].curCity;
@@ -124,6 +122,8 @@ int NextCity( int pos ){
    
   assert(denom != 0.0); 
 
+  int count = CITIES;
+
 	do{
 		double p = 0.0;
 		to++;
@@ -132,14 +132,18 @@ int NextCity( int pos ){
 			to=0;
 
 		if(ants[pos].visited[to] == 0){
-			p = antProduct(from,to)/denom;
+			p = (double) antProduct(from,to)/denom;
 
-			double x = (double)(rand() % 100000)/ 100000; 
-     // printf("Denon: %18.50f -- X: %lf, p: %18.50f\n",denom, (double)rand()/RAND_MAX,p);
+			double x = (double) (rand()/RAND_MAX); 
+      //printf("Denon: %18.50f -- X: %18.50f, p: %18.50f\n",denom, x,p);
 			if(x < p){
         //printf("%lf -- X\n", x);
 				break;
 			}
+      count--;
+      if(count == 0){
+        break;
+      }
 		}//sleep(3);
 	}while(1);
 
@@ -223,7 +227,8 @@ void move_ants(){
       if (curtime != MAX_TIME)
           restart_ants();
     }
-    printf("Best: %lf\n", bestdistance);
+    if(MAX_TIME%curtime == 0 )
+      printf("Best: %lf\n", bestdistance);
   }
 }
 
@@ -236,9 +241,11 @@ int main()
   initialize_ants();
   
   srand(time(NULL));
-  printf("End - setting data; Begin -- calculations\n");
+  //printf("End - setting data; Begin -- calculations\n");
 
   move_ants();
+  
+  
  
 	return 0;
 }
