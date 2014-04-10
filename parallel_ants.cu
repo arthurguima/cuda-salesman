@@ -306,37 +306,3 @@ void updateTrails(){
 		}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
- * //teste
-	   	  int i;
-	   	  cudaMemcpy(ants, ants_d, sizeof(ants), cudaMemcpyDeviceToHost);
-	   	  for(i = 0; i < ANTS; i++)
-	   	  	  printf("Ant[%i] -> curCity %i  path[curCity] = %i visited[curCity] = %i\n", i, ants[i].curCity,
-	   	  			  ants[i].path[ants[i].curCity], ants[i].visited[ants[i].curCity]);
-	   //teste
- *
- */
